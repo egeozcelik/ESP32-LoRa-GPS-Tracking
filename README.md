@@ -1,6 +1,6 @@
 # V2V Smart Communication for Emergency Vehicles with GPS Tracking
 
-![Project Image](project_image_1.jpg)
+![Project Image](_project_image_1.jpg)
 
 ## Overview
 V2V Smart Communication for Emergency Vehicles is a project aimed at enabling wireless communication and location sharing among emergency vehicles. The system enhances the efficiency and effectiveness of emergency response by allowing vehicles such as ambulances and fire trucks to communicate with each other. It facilitates improved traffic coordination and enhanced safety measures.
@@ -11,7 +11,7 @@ LoRa modules are responsible for wireless communication between emergency vehicl
 
 An Arduino or similar microcontroller is employed to control the system components. It facilitates the connection of LoRa modules and GPS modules, as well as the processing and display of received data. OLED displays are utilized to provide visual output of important information, allowing vehicles and the control center to read the received data, such as distance information.
 
-![Modules](project_image_3.jpg)
+![PCB Layout](_project_image_3.jpg)
 
 ## Features
 - LILYGO T-BEAM-V1.1 and Arduino IDE is used.
