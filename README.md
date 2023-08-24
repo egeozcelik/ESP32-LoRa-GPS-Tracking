@@ -37,37 +37,78 @@ An Arduino or similar microcontroller is employed to control the system componen
 # CODES
 
 ## Transmitter
-This code implements the functions of the LoRa transmitter. It includes the SPI and LoRa libraries. It sends packets over the LoRa module and increments a counter value with each transmission. It displays the counter value on the serial port and transmits the packet through the LoRa module to enable wireless communication. The purpose of the code is to send string data "packet 1," "packet 2," etc., to control the functionality of the antennas.
+The transmitter code implements a project where an Arduino device receives GPS data and transmits it to another device using a LoRa (Long-Range, Low-Power) module. Here's a general overview of what the code does:
 
-## Receiver
-This code implements the functions of the LoRa receiver. It includes the LoRa and Adafruit SSD1306 libraries. It uses the Wire library to scan I2C devices. It receives packets from the LoRa module, displays the received data on an OLED screen, and shows the content of the packet on the serial port. The purpose of the code is to receive and display the packets sent by the transmitter while controlling the functionality of the LoRa receiver.
+Library and Constants Definition:
 
-## GPS TRACKER
-This code is designed to monitor the distance between a transmitter and a receiver using LoRa communication and GPS coordinates. The setup function initializes various components such as the GPS module, OLED display, and LoRa module. It also configures the necessary pins and communication settings. If a different module is used instead of the T-Beam, the pin assignments may need to be adjusted accordingly.
+The "LoRa_E32.h" and "SoftwareSerial.h" libraries are included.
+RX and TX pins are set for the LoRa module.
+RX and TX pins are set for processing GPS data using the "TinyGPSPlus.h" library.
+Definition of Data Structure:
 
-The defined constants at the beginning of the code serve specific purposes. The SCREEN_WIDTH and SCREEN_HEIGHT constants define the dimensions of the OLED display. OLED_RESET is used to specify the reset pin of the display. SS, RST, and DI0 constants define the GPIO pins used by the LoRa module for chip select, reset, and interrupt. BAND represents the operating frequency of the LoRa module. These constants are used throughout the code to configure and communicate with the respective components.
+A structure named "veriler" is defined to store GPS data. This structure contains latitude and longitude data.
+setup() Function:
 
-Overall, the code reads GPS coordinates from the receiver, receives data packets via LoRa, calculates the distance between the transmitter and receiver using the Haversine formula, and displays relevant information on the OLED display. It also checks for significant changes in distance and provides appropriate feedback through both the serial monitor and the display. This setup allows for real-time monitoring and alerting based on distance variations between the transmitter and receiver.
+Serial communication is set at a baud rate of 9600.
+The GPS device's communication speed (baud rate) is set to 9600.
+M0 and M1 pins of the LoRa module are pulled low to set the operating modes.
+The LoRa module is initialized.
+loop() Function:
+
+Acquisition of GPS Data:
+As data is received from the GPS device, it is processed, and if valid, the "displayInfo()" function is called.
+If valid data is not received within a certain time, an error message is displayed, and the loop is halted.
+Reception of GPS data and assignment to the "veriler" structure.
+Transmission of data via the LoRa module:
+Data is sent to the LoRa module using the "E32.sendFixedMessage()" function.
+The response status object "ResponseStatus" is obtained, and information about the result is printed to the serial port.
+A specific delay (2 seconds) is applied.
+displayInfo() Function:
+
+GPS data is printed to the serial port.
+Location (latitude and longitude), date, and time information are displayed.
+This code receives GPS data and transmits it to another device through a LoRa module. The LoRa module provides low power consumption and long communication range. After receiving and parsing GPS data, the latitude and longitude information is stored in the "veriler" structure, and these data structures are sent to another device using the LoRa module. Additionally, GPS data is printed to the serial port for tracking purposes.
 
 
 ![Output](_project_image_2.jpg)
 
-### In Integrated Receiver Code:
-- Threshold values is set up to 5 meters(float) because of the GPS unstable coordinates the location. It is caused by some reasons. Such as T-Beam modules looks towards to the sky, when there are obstacles such as ceilings deviation occurs on latitude and longitude values. Even electromagnetic waves in the environment (such as a phone calls) that will disrupt the frequency can sometimes cause it. Arrange to your threshold value by making measurements in various environmental conditions untill the data is correct. If you trust your conditions and modules you can make the comment block threshold declaration part of the Integrated_Receiver code.
+### Receiver Code
+This Receiver code involves programming a device that performs a series of different tasks. I'll summarize the general purpose of the code:
 
-- You can arrange the informations on the display in the "DisplayDistance()" function.
+Library and Pin Definitions:
 
-- Also you can print the  distance between cars on your project if its necessary. It can be used in a scenario like, a 
-To instantly follow the distance to the destination to be reached or to measure the distance traveled. It's all up to you.
+The code starts by including the "LoRa_E32" and "SoftwareSerial" libraries.
+Pin definitions are made for two different modules: M0 and M1 pins for the LoRa module, and RX and TX pins for the GPS module.
+LoRa Module Initialization:
 
-## Path Finder Gps IntegratedReceiver
-This code introduces the following additions to the previous version:
+Serial communication connection for the LoRa module is established using the SoftwareSerial library.
+The LoRa_E32 class is initialized.
+M0 and M1 pins are set to their respective states (LOW).
+GPS Module Initialization:
 
-The checkIntersection() function is implemented to verify whether the transmitter and receiver paths intersect. It takes two sets of points, path1 and path2, and performs intersection checks based on these points. If the paths intersect, it returns true; otherwise, it returns false.
-The displayWarningMessage() function is included to display warning messages through the serial port. The function takes a message parameter and writes it to the serial port. This allows appropriate warning messages to be displayed when intersections occur.
-The determinePaths() function is introduced to define the transmitter and receiver paths. These paths can be defined using fixed points or real-time GPS data. For example, fixed points are added to the transmitterPath and receiverPath vectors.
-The setup() function handles the initial setup. It initializes the serial and LoRa connections, initializes the SSD1306 OLED display, configures the GPS settings, and calls the determinePaths() function to set the paths.
-The loop() function is the main loop that continuously runs. It reads GPS data, calculates the distance from the nearest points, determines the direction, displays the distance on the OLED screen and serial port, checks for path intersections, and displays an appropriate warning message on the serial port.
+Serial communication connection for the GPS module is established using the "TinyGPSPlus" library.
+Data Structure Definitions:
+
+A data structure named veriler is defined, containing float variables to store latitude and longitude values.
+Setup Function:
+
+Serial communication speed is set.
+Communication with the GPS module is initiated.
+Pin modes are set, and the LoRa module is initialized.
+Main Loop:
+
+GPS data is read, and the gps object is updated with this data.
+If a valid GPS location is obtained, these data are saved in the rx_Lat and rx_Lng variables.
+If a certain amount of time passes and insufficient data is received from the GPS module, an error message is displayed, and the program halts.
+It's checked whether data is received from the LoRa module.
+If data is received, the received data is converted to the veriler structure, and the respective latitude and longitude values are saved in the tx_Lat and tx_Lng variables.
+The distance between the two locations is calculated and printed over the serial port.
+The code uses both LoRa and GPS modules to calculate the distance between two locations and displays this information over the serial port. While the GPS module is used to determine the receiver's location, the LoRa module is employed to wirelessly transmit and receive data. This way, you can exchange location data between two different devices and evaluate this data by calculating the distance.
+
+
+
+
+
 
 ![Output](_project_image_1.jpg)
 
